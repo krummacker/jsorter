@@ -39,6 +39,7 @@ public class RemoveAddQuickSorter<T extends Comparable<T>> implements Sorter<T> 
             if (current.compareTo(pivot) < 0) {
 
                 // These are slow.
+                //noinspection SuspiciousListRemoveInLoop
                 list.remove(i);
                 list.add(start, current);
 
