@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Sorts Lists using the quick sort algorithm. This implementation does not create any new objects. However the add()
+ * Sorts Lists using the quick sort algorithm. This implementation does not create any new objects. However, the add()
  * and remove() methods are very slow and cause bad performance.
  *
  * @param <T> the type of objects to be sorted
