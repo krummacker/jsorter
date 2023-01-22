@@ -17,12 +17,12 @@ public abstract class SorterBase {
     private Sorter<Integer> sorter;
 
     @BeforeMethod
-    public void setUp() throws Exception {
+    public void setUp() {
         sorter = getSorter();
     }
 
     @AfterMethod
-    public void tearDown() throws Exception {
+    public void tearDown() {
         sorter = null;
     }
 
@@ -35,7 +35,7 @@ public abstract class SorterBase {
     protected abstract Sorter<Integer> getSorter();
 
     @Test
-    public void testSortHappyCase() throws Exception {
+    public void testSortHappyCase() {
 
         List<Integer> before = Arrays.asList(2, 4, 7, 9, 3, 5, 1, 8, 6);
         List<Integer> after = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
@@ -45,7 +45,7 @@ public abstract class SorterBase {
     }
 
     @Test
-    public void testSortAlreadySorted() throws Exception {
+    public void testSortAlreadySorted() {
 
         List<Integer> before = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
         List<Integer> after = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
@@ -55,7 +55,7 @@ public abstract class SorterBase {
     }
 
     @Test
-    public void testSortEmptyList() throws Exception {
+    public void testSortEmptyList() {
 
         List<Integer> before = Collections.emptyList();
         List<Integer> after = Collections.emptyList();
@@ -65,7 +65,7 @@ public abstract class SorterBase {
     }
 
     @Test
-    public void testSortListNull() throws Exception {
+    public void testSortListNull() {
 
         try {
             sorter.sort(null);
@@ -79,7 +79,7 @@ public abstract class SorterBase {
     }
 
     @Test
-    public void testSortElementNull() throws Exception {
+    public void testSortElementNull() {
 
         List<Integer> before = Arrays.asList(2, null, 7);
 

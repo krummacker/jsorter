@@ -31,8 +31,7 @@ public class MedianQuickSorter<T extends Comparable<T>> implements Sorter<T> {
         List<T> first = sort(pivotSplitter.getSmaller());
         List<T> last = sort(pivotSplitter.getBigger());
 
-        List<T> result = new ArrayList<>();
-        result.addAll(first);
+        List<T> result = new ArrayList<>(first);
         result.add(pivotSplitter.getPivot());
         result.addAll(last);
         return result;
@@ -44,15 +43,13 @@ public class MedianQuickSorter<T extends Comparable<T>> implements Sorter<T> {
      */
     class PivotSplitter {
 
-        private List<T> input;
+        private final List<T> input;
         private T pivot;
         private List<T> smaller;
         private List<T> bigger;
 
         /**
          * Builds a method object using the provided list as an argument.
-         *
-         * @param input
          */
         PivotSplitter(List<T> input) {
             this.input = input;

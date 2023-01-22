@@ -30,29 +30,4 @@ public class Tools {
         }
         return result;
     }
-
-    /**
-     * Determines the median of the 3 specified arguments, i.e. the element that is "in the middle".
-     *
-     * @param a the first element
-     * @param b the second element
-     * @param c the third element
-     * @return the median, one of a, b, or c
-     * @throws NullPointerException if any of the arguments is null
-     */
-    static <T extends Comparable<T>> T computeMedian(T a, T b, T c) {
-        if (a.compareTo(b) > 0) {
-            if (b.compareTo(c) > 0) {
-                return b;
-            } else {
-                return a.compareTo(c) > 0 ? c : a;
-            }
-        } else {
-            if (b.compareTo(c) < 0) {
-                return b;
-            } else {
-                return a.compareTo(c) < 0 ? c : a;
-            }
-        }
-    }
 }

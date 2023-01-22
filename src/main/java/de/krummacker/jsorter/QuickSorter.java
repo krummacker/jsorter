@@ -46,8 +46,7 @@ public class QuickSorter<T extends Comparable<T>> implements Sorter<T> {
         List<T> first = sort(smaller);
         List<T> last = sort(bigger);
 
-        List<T> result = new ArrayList<>();
-        result.addAll(first);
+        List<T> result = new ArrayList<>(first);
         result.add(pivot);
         result.addAll(last);
         return result;

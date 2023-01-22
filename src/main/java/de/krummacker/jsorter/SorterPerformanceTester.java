@@ -70,13 +70,13 @@ public class SorterPerformanceTester {
 
         // Sorters are ordered by resilience against stack overflow errors and then performance.
         List<Sorter<Integer>> sorters = Arrays.asList(
-                new RemoveAddQuickSorter<Integer>(),
-                new QuickSorter<Integer>(),
-                new RandomPivotQuickSorter<Integer>(),
-                new BubbleSorter<Integer>(),
-                new MedianQuickSorter<Integer>(),
-                new MultithreadedQuickSorter<Integer>(),
-                new StandardApiSorter<Integer>());
+                new RemoveAddQuickSorter<>(),
+                new QuickSorter<>(),
+                new RandomPivotQuickSorter<>(),
+                new BubbleSorter<>(),
+                new MedianQuickSorter<>(),
+                new MultithreadedQuickSorter<>(),
+                new StandardApiSorter<>());
 
         for (int i = step; i <= max; i += step) {
             output.print("Number of elements: " + i + "; ");
