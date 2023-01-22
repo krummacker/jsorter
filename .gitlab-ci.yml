@@ -3,7 +3,7 @@ variables:
   MAVEN_CLI_OPTS: '--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true'
 
 # For other maven/openjdk versions see: https://hub.docker.com/_/maven/
-image: maven:3.6.3-openjdk-15
+image: maven:3.6.3-openjdk-17
 cache:
   paths:
     - .m2/repository
@@ -11,5 +11,5 @@ cache:
   stage: test
   script:
     - 'mvn $MAVEN_CLI_OPTS verify'
-verify:openjdk15:
+verify:openjdk17:
   <<: *verify
