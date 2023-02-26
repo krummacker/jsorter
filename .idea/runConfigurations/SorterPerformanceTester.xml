@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="SorterPerformanceTester" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="de.krummacker.jsorter.SorterPerformanceTester" />
+    <module name="jsorter" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
