@@ -1,9 +1,10 @@
-image: maven:3.6.3-openjdk-17
+image: maven:latest
 
 stages:
-  - test
+  - check
 
-test:
-  stage: test
+check:
+  stage: check
   script:
+    - mvn --version
     - mvn test
