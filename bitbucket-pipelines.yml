@@ -1,0 +1,11 @@
+image: maven:latest
+
+pipelines:
+  default:
+    - step:
+        name: Check
+        script:
+          - mvn --version
+          - mvn test
+
+

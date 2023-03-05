@@ -1,10 +1,14 @@
 image: maven:latest
 
 stages:
-  - check
+  - test
 
-check:
-  stage: check
+test:
+  stage: test
   script:
     - mvn --version
     - mvn test
+
+# test stage
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
