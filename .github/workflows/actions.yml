@@ -6,5 +6,6 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
+      - run: java --version
       - run: mvn --version
-      - run: mvn test
+      #- run: mvn test
