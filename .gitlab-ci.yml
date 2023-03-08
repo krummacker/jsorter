@@ -1,14 +1,30 @@
-image: maven:latest
-
 stages:
   - test
 
-test:
+maven:
   stage: test
+  image: maven:latest
+  variables:
+    MAVEN_OPTS: >-
+      -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+  cache:
+    paths:
+      - .m2/repository
   script:
     - mvn --version
     - mvn test
+    - mvn verify # runs OWASP dependency-check
+  artifacts:
+    paths:
+      - target/dependency-check-report.html
 
-# test stage
+trivy:
+  stage: test
+  image: curlimages/curl:latest
+  script:
+    - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b .
+    - ./trivy fs .
+
+# included in test stage
 include:
   - template: Jobs/SAST.gitlab-ci.yml
