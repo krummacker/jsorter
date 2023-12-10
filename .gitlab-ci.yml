@@ -13,6 +13,7 @@ maven:
   script:
     - mvn --version
     - mvn test
+    - echo '$NVD_API_KEY'
     - mvn -DnvdApiKey=$NVD_API_KEY verify # runs OWASP dependency-check
   artifacts:
     paths:
