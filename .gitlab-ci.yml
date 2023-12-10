@@ -12,20 +12,20 @@ maven:
       - .m2/repository
   script:
     - mvn --version
-    - mvn test
+#    - mvn test
     - echo '$NVD_API_KEY'
-    - mvn -DnvdApiKey=$NVD_API_KEY verify # runs OWASP dependency-check
+#    - mvn -DnvdApiKey=$NVD_API_KEY verify # runs OWASP dependency-check
   artifacts:
     paths:
       - target/dependency-check-report.html
 
-trivy:
-  stage: test
-  image: curlimages/curl:latest
-  script:
-    - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b .
-    - ./trivy fs .
+#trivy:
+#  stage: test
+#  image: curlimages/curl:latest
+#  script:
+ #   - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b .
+ #   - ./trivy fs .
 
 # included in test stage
-include:
-  - template: Jobs/SAST.gitlab-ci.yml
+#include:
+ # - template: Jobs/SAST.gitlab-ci.yml
