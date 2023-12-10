@@ -14,6 +14,7 @@ maven:
     - mvn --version
 #    - mvn test
     - echo '$NVD_API_KEY'
+    - echo '$CI_PROJECT_DIR'
 #    - mvn -DnvdApiKey=$NVD_API_KEY verify # runs OWASP dependency-check
   artifacts:
     paths:
