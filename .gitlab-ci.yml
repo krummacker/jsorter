@@ -17,18 +17,18 @@ maven:
     - echo $CI_PROJECT_DIR
 #    Deactivating dependency check because it is currently broken when called from CI/CD
 #    See https://github.com/jeremylong/DependencyCheck/issues/6157
-    - mvn -DnvdApiKey=$NVD_API_KEY verify # runs OWASP dependency-check
+#    - mvn -DnvdApiKey=$NVD_API_KEY verify # runs OWASP dependency-check
   artifacts:
     paths:
       - target/dependency-check-report.html
 
-#trivy:
-#  stage: test
-#  image: curlimages/curl:latest
-#  script:
- #   - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b .
- #   - ./trivy fs .
+trivy:
+  stage: test
+  image: curlimages/curl:latest
+  script:
+    - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b .
+    - ./trivy fs .
 
 # included in test stage
-#include:
- # - template: Jobs/SAST.gitlab-ci.yml
+include:
+  - template: Jobs/SAST.gitlab-ci.yml
