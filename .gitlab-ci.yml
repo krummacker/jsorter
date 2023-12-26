@@ -17,7 +17,7 @@ maven:
     - echo $CI_PROJECT_DIR
 #    Deactivating dependency check because it is currently broken when called from CI/CD
 #    See https://github.com/jeremylong/DependencyCheck/issues/6157
-#    - mvn -DnvdApiKey=$NVD_API_KEY verify # runs OWASP dependency-check
+    - mvn -DnvdApiKey=$NVD_API_KEY verify # runs OWASP dependency-check
   artifacts:
     paths:
       - target/dependency-check-report.html
