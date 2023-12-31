@@ -14,7 +14,7 @@ maven:
     - mvn --version
     - mvn test
     # run OWASP dependency-check
-    - mvn -DnvdApiKey=$NVD_API_KEY -DnvdValidForHours=0 -DnvdApiDelay=5000 verify
+    - mvn -DnvdApiKey=$NVD_API_KEY -DnvdValidForHours=0 -DnvdApiDelay=5000 org.owasp:dependency-check-maven:check
   artifacts:
     paths:
       - target/dependency-check-report.html
