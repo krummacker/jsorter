@@ -46,7 +46,7 @@ public class SorterPerformanceTester {
 
                 long before = System.nanoTime();
                 List<Integer> sorted = Collections.emptyList();
-                boolean skipped;
+                boolean skipped;  // 'false' by default
                 if ((count > 10000 && sorter instanceof RandomPivotQuickSorter) ||
                         (count > 5000 && sorter instanceof BubbleSorter) ||
                         (count > 10000 && sorter instanceof RemoveAddQuickSorter)) {
@@ -70,7 +70,7 @@ public class SorterPerformanceTester {
                     skipped = true;
                 } else {
                     sorter.sort(sorted);
-                    skipped = false;
+                    // keep skipped = false
                 }
                 after = System.nanoTime();
                 if (skipped) {
