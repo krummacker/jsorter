@@ -1,19 +1,32 @@
 stages:
   - test
 
-maven:
+variables:
+  MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
+
+cache:
+  key:
+    files:
+      - pom.xml
+  paths:
+    - .m2/repository
+
+unit-test:
   stage: test
-  image: maven:latest
-  variables:
-    MAVEN_OPTS: >-
-      -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
-  cache:
-    paths:
-      - .m2/repository
+  image: maven:3.9.9-eclipse-temurin-21
   script:
-    - mvn --version
-    - mvn test
-    # run OWASP dependency-check
+    - mvn $MAVEN_CLI_OPTS test
+  artifacts:
+    when: always
+    reports:
+      junit:
+        - target/surefire-reports/*.xml
+
+dependency-check:
+  stage: test
+  image: maven:3.9.9-eclipse-temurin-21
+  script:
     - mkdir -p ~/.m2
     - |
       cat > ~/.m2/settings.xml <<EOF
@@ -27,17 +40,31 @@ maven:
         </servers>
       </settings>
       EOF
-    - mvn -DnvdApiKey=$NVD_API_KEY -DnvdValidForHours=0 -DnvdApiDelay=5000 org.owasp:dependency-check-maven:check
+    - mvn $MAVEN_CLI_OPTS -DnvdApiKey=$NVD_API_KEY org.owasp:dependency-check-maven:check
   artifacts:
+    when: always
     paths:
       - target/dependency-check-report.html
+    expire_in: 28 days
 
 trivy:
   stage: test
-  image: curlimages/curl:latest
+  image:
+    name: aquasec/trivy:0.62.1
+    entrypoint: [""]
+  variables:
+    TRIVY_CACHE_DIR: .trivycache
+  cache:
+    key: trivy
+    paths:
+      - .trivycache/
   script:
-    - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b .
-    - ./trivy fs .
+    - trivy fs --exit-code 1 --no-progress --format json --output trivy-report.json .
+  artifacts:
+    when: always
+    paths:
+      - trivy-report.json
+    expire_in: 28 days
 
 # included in test stage
 include:
