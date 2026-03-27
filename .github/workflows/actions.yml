@@ -26,6 +26,18 @@ jobs:
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<EOF
+          <settings>
+            <servers>
+              <server>
+                <id>ossindex</id>
+                <username>${OSS_INDEX_USERNAME}</username>
+                <password>${OSS_INDEX_TOKEN}</password>
+              </server>
+            </servers>
+          </settings>
+          EOF
           mvn -DnvdApiKey=$NVD_API_KEY -DnvdValidForHours=0 -DnvdApiDelay=5000 org.owasp:dependency-check-maven:check
       - name: Archive dependency check results
         uses: actions/upload-artifact@v6
