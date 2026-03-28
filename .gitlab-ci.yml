@@ -6,15 +6,12 @@ variables:
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
 
 cache:
-  key:
-    files:
-      - pom.xml
   paths:
     - .m2/repository
 
 unit-test:
   stage: test
-  image: maven:3.9.9-eclipse-temurin-21
+  image: maven:3.9.13-eclipse-temurin-21
   script:
     - mvn $MAVEN_CLI_OPTS test
   artifacts:
@@ -25,8 +22,12 @@ unit-test:
 
 dependency-check:
   stage: test
-  image: maven:3.9.9-eclipse-temurin-21
+  image: maven:3.9.13-eclipse-temurin-21
   script:
+    - |
+      : "${OSS_INDEX_USERNAME:?OSS_INDEX_USERNAME is required for dependency-check}"
+      : "${OSS_INDEX_TOKEN:?OSS_INDEX_TOKEN is required for dependency-check}"
+      : "${NVD_API_KEY:?NVD_API_KEY is required for dependency-check}"
     - mkdir -p ~/.m2
     - |
       cat > ~/.m2/settings.xml <<EOF
@@ -50,7 +51,7 @@ dependency-check:
 trivy:
   stage: test
   image:
-    name: aquasec/trivy:0.62.1
+    name: aquasec/trivy:0.69.3
     entrypoint: [""]
   variables:
     TRIVY_CACHE_DIR: .trivycache

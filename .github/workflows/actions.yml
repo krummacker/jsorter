@@ -1,8 +1,17 @@
 name: GitHub Actions
 on: [push]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  Check:
-    runs-on: ubuntu-latest
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
       - name: Check out code
         uses: actions/checkout@v6
@@ -20,11 +29,22 @@ jobs:
       - name: Run unit tests
         shell: bash
         run: |
-          mvn test
+          mvn -B -ntp test
+
+  dependency-check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+      - name: Set up Java and Maven cache
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
       - name: Run OWASP dependency-check
         shell: bash
-        env:
-          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
           mkdir -p ~/.m2
           cat > ~/.m2/settings.xml <<EOF
@@ -32,15 +52,17 @@ jobs:
             <servers>
               <server>
                 <id>ossindex</id>
-                <username>${OSS_INDEX_USERNAME}</username>
-                <password>${OSS_INDEX_TOKEN}</password>
+                <username>${{ secrets.OSS_INDEX_USERNAME }}</username>
+                <password>${{ secrets.OSS_INDEX_PASSWORD }}</password>
               </server>
             </servers>
           </settings>
           EOF
-          mvn -DnvdApiKey=$NVD_API_KEY -DnvdValidForHours=0 -DnvdApiDelay=5000 org.owasp:dependency-check-maven:check
+          mvn -DnvdApiKey=${{ secrets.NVD_API_KEY }} -DnvdValidForHours=0 -DnvdApiDelay=5000 org.owasp:dependency-check-maven:check
       - name: Archive dependency check results
+        if: always()
         uses: actions/upload-artifact@v6
         with:
           name: dependency-check
           path: target/dependency-check-report.html
+          if-no-files-found: warn
