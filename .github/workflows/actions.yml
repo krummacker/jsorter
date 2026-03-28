@@ -53,7 +53,7 @@ jobs:
               <server>
                 <id>ossindex</id>
                 <username>${{ secrets.OSS_INDEX_USERNAME }}</username>
-                <password>${{ secrets.OSS_INDEX_PASSWORD }}</password>
+                <password>${{ secrets.OSS_INDEX_TOKEN }}</password>
               </server>
             </servers>
           </settings>
