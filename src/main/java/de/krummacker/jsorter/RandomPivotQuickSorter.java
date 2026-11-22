@@ -12,7 +12,7 @@ import java.util.Random;
  */
 public class RandomPivotQuickSorter<T extends Comparable<T>> implements Sorter<T> {
 
-    private static Random random;
+    private final Random random;
 
     /**
      * Creates a new RandomPivotQuickSorter.
