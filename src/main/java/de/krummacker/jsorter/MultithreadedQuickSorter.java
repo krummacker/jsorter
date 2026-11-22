@@ -1,10 +1,6 @@
 package de.krummacker.jsorter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -19,13 +15,6 @@ import java.util.concurrent.Future;
  * @param <T> the type of objects to be sorted
  */
 public class MultithreadedQuickSorter<T extends Comparable<T>> extends MedianQuickSorter<T> {
-
-    private static final Logger log = LoggerFactory.getLogger(MultithreadedQuickSorter.class);
-
-    /**
-     * The thread pool with the threads that do the sorting work.
-     */
-    private final ExecutorService executorService = Executors.newWorkStealingPool();
 
     /**
      * Through testing this has turned out to be a reasonable number. A higher value would increase the number of
@@ -42,7 +31,12 @@ public class MultithreadedQuickSorter<T extends Comparable<T>> extends MedianQui
 
     @Override
     public List<T> sort(List<T> input) {
-        return sort(input, 0);
+        ExecutorService executorService = Executors.newWorkStealingPool();
+        try {
+            return sort(input, 0, executorService);
+        } finally {
+            executorService.shutdownNow();
+        }
     }
 
     /**
@@ -52,7 +46,7 @@ public class MultithreadedQuickSorter<T extends Comparable<T>> extends MedianQui
      * @param deepness the nesting level that we are in
      * @return the sorted list
      */
-    private List<T> sort(List<T> input, int deepness) {
+    private List<T> sort(List<T> input, int deepness, ExecutorService executorService) {
 
         if (input.size() < 2) {
             // already sorted
@@ -69,19 +63,32 @@ public class MultithreadedQuickSorter<T extends Comparable<T>> extends MedianQui
 
         if (deepness < threadCreationThreshold) {
 
-            Future<List<T>> firstFuture = executorService.submit(() -> sort(smaller, deepness + 1));
-            Future<List<T>> lastFuture = executorService.submit(() -> sort(bigger, deepness + 1));
+            Future<List<T>> firstFuture = executorService.submit(() -> sort(smaller, deepness + 1, executorService));
+            Future<List<T>> lastFuture = executorService.submit(() -> sort(bigger, deepness + 1, executorService));
 
             try {
                 first = firstFuture.get();
                 last = lastFuture.get();
-            } catch (InterruptedException | ExecutionException e) {
-                log.error("caught unexpected exception while dealing with Future", e);
-                return Collections.emptyList();
+            } catch (InterruptedException e) {
+                firstFuture.cancel(true);
+                lastFuture.cancel(true);
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Sorting was interrupted", e);
+            } catch (ExecutionException e) {
+                firstFuture.cancel(true);
+                lastFuture.cancel(true);
+                Throwable cause = e.getCause();
+                if (cause instanceof RuntimeException runtimeException) {
+                    throw runtimeException;
+                }
+                if (cause instanceof Error error) {
+                    throw error;
+                }
+                throw new IllegalStateException("A sorting task failed", cause);
             }
         } else {
-            first = sort(smaller, deepness + 1);
-            last = sort(bigger, deepness + 1);
+            first = sort(smaller, deepness + 1, executorService);
+            last = sort(bigger, deepness + 1, executorService);
         }
 
         List<T> result = new ArrayList<>(input.size());
