@@ -2,6 +2,7 @@ package de.krummacker.jsorter;
 
 import de.krummacker.tools.Tools;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -40,42 +41,36 @@ public class SorterPerformanceTester {
         System.out.println("  Count      Remove/Add       QuickSort     RandomPivot      BubbleSort     MedianQuick   Multithreaded     StandardAPI");
         System.out.println("         random  sorted  random  sorted  random  sorted  random  sorted  random  sorted  random  sorted  random  sorted");
         for (int count : counts) {
+            List<Integer> randomInput = Tools.createRandomList(count);
+            List<Integer> sortedInput = new ArrayList<>(randomInput);
+            Collections.sort(sortedInput);
+
             System.out.printf("%7d", count);
             for (Sorter<Integer> sorter : sorters) {
-                List<Integer> input = Tools.createRandomList(count);
-
-                long before = System.nanoTime();
-                List<Integer> sorted = Collections.emptyList();
-                boolean skipped;  // 'false' by default
-                if ((count > 10000 && sorter instanceof RandomPivotQuickSorter) ||
+                boolean skipRandom = (count > 10000 && sorter instanceof RandomPivotQuickSorter) ||
                         (count > 5000 && sorter instanceof BubbleSorter) ||
-                        (count > 10000 && sorter instanceof RemoveAddQuickSorter)) {
-                    skipped = true;
-                } else {
-                    sorted = sorter.sort(input);
-                    skipped = false;
-                }
-                long after = System.nanoTime();
-                if (skipped) {
+                        (count > 10000 && sorter instanceof RemoveAddQuickSorter);
+                if (skipRandom) {
                     System.out.print("       -");
                 } else {
+                    List<Integer> input = new ArrayList<>(randomInput);
+                    long before = System.nanoTime();
+                    sorter.sort(input);
+                    long after = System.nanoTime();
                     System.out.printf("%8d", (after - before) / 1000);
                 }
 
-                before = System.nanoTime();
-                if ((count > 5000 && sorter instanceof QuickSorter) ||
+                boolean skipSorted = (count > 5000 && sorter instanceof QuickSorter) ||
                         (count > 10000 && sorter instanceof RemoveAddQuickSorter) ||
                         (count > 10000 && sorter instanceof RandomPivotQuickSorter) ||
-                        (count > 5000 && sorter instanceof BubbleSorter)) {
-                    skipped = true;
-                } else {
-                    sorter.sort(sorted);
-                    // keep skipped = false
-                }
-                after = System.nanoTime();
-                if (skipped) {
+                        (count > 5000 && sorter instanceof BubbleSorter);
+                if (skipSorted) {
                     System.out.print("       -");
                 } else {
+                    List<Integer> input = new ArrayList<>(sortedInput);
+                    long before = System.nanoTime();
+                    sorter.sort(input);
+                    long after = System.nanoTime();
                     System.out.printf("%8d", (after - before) / 1000);
                 }
             }
