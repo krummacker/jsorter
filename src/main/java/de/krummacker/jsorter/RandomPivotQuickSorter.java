@@ -35,11 +35,15 @@ public class RandomPivotQuickSorter<T extends Comparable<T>> implements Sorter<T
         // This implementation creates new lists in every step but this has turned out to be quicker than using the
         // add() and remove() methods in ArrayList.
         List<T> smaller = new ArrayList<>();
+        List<T> equal = new ArrayList<>();
         List<T> bigger = new ArrayList<>();
 
         for (T element : input) {
-            if (element.compareTo(pivot) < 0) {
+            int comparison = element.compareTo(pivot);
+            if (comparison < 0) {
                 smaller.add(element);
+            } else if (comparison == 0) {
+                equal.add(element);
             } else {
                 bigger.add(element);
             }
@@ -50,6 +54,7 @@ public class RandomPivotQuickSorter<T extends Comparable<T>> implements Sorter<T
 
         List<T> result = new ArrayList<>();
         result.addAll(first);
+        result.addAll(equal);
         result.addAll(last);
         return result;
     }
