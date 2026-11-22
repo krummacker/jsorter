@@ -20,34 +20,6 @@ unit-test:
       junit:
         - target/surefire-reports/*.xml
 
-dependency-check:
-  stage: test
-  image: maven:3.9.13-eclipse-temurin-25
-  script:
-    - |
-      : "${OSS_INDEX_USERNAME:?OSS_INDEX_USERNAME is required for dependency-check}"
-      : "${OSS_INDEX_TOKEN:?OSS_INDEX_TOKEN is required for dependency-check}"
-      : "${NVD_API_KEY:?NVD_API_KEY is required for dependency-check}"
-    - mkdir -p ~/.m2
-    - |
-      cat > ~/.m2/settings.xml <<EOF
-      <settings>
-        <servers>
-          <server>
-            <id>ossindex</id>
-            <username>${OSS_INDEX_USERNAME}</username>
-            <password>${OSS_INDEX_TOKEN}</password>
-          </server>
-        </servers>
-      </settings>
-      EOF
-    - mvn $MAVEN_CLI_OPTS -DnvdApiKey=$NVD_API_KEY org.owasp:dependency-check-maven:check
-  artifacts:
-    when: always
-    paths:
-      - target/dependency-check-report.html
-    expire_in: 28 days
-
 trivy:
   stage: test
   image:
