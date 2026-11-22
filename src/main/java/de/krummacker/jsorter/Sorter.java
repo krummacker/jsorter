@@ -12,7 +12,8 @@ import java.util.List;
 public interface Sorter<T extends Comparable<T>> {
 
     /**
-     * Sorts the specified list and returns the result. Does not change the parameter.
+     * Sorts the specified list and returns the result. Implementations may modify the input list directly or return a
+     * sorted copy; callers should not rely on the input remaining unchanged.
      *
      * @param input the list to be sorted
      * @return a sorted list
